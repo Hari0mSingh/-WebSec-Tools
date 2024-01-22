@@ -57,6 +57,12 @@
         <p>Web Pentesting</p>
     </main>
 
+    <form method="post" action="/About-Me">
+        <label for="xss" style="color: #000000;">Enter</label>
+        <input type="text" name="xss_input" id="xss">
+        <input type="submit"  value="submit">
+    </form>
+    <div>{{ user_input | safe }}</div><!--we are allowing user input to reflect the page-->
 </body>
 
 </html>
