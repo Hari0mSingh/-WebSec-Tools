@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request
-
+from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root123@localhost/app'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
 
 @app.route('/')
 def home():
@@ -15,12 +19,21 @@ def aboutme():
 
 @app.route('/login', methods=['GET','POST'] )
 def login():
-    user_input = ''
-    user_input_password = ''
+    message = ''
     if request.method=='POST':
-        user_input = request.form.get('username','')
-        user_input_password = request.form.get('password','')
-    return render_template("login.html", user_input = user_input,user_input_password = user_input_password )
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        query_statement = f" select username from users where username = '{username}' and password = '{password}';"
+
+        result = db.engine.execute(query_statement)
+        user = result.fetchone()
+        if user:
+            message = f"Welcome, {user}"
+        else:
+            message = "Incorrect username or password"
+    return render_template('login.html', message = message)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

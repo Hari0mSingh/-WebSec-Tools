@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>sign-up</title>
     <style>
         body {
             margin: 0;
@@ -58,13 +58,14 @@
 
 <body>
     <div class="login-container">
-        <h2>Login</h2>
+        <h2>sign-up</h2>
+        <h3>This is our sign-up page</h3>
         <form method="post" action="/login">
             <input type="text" class="login-input" name="username" placeholder="Username" required>
             <input type="password" class="login-input" name="password" placeholder="Password" required>
             <button type="submit" class="login-button">Login</button>
         </form>
-        <div >{{ user_input, user_input_password | safe }}</div><!--we are allowing user input to reflect the page for testing purpose-->
+        <div >{{ message }}</div><!--we are allowing user input to reflect the page for testing purpose-->
     </div>
 </body>
 
