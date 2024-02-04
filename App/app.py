@@ -34,6 +34,23 @@ def login():
             message = "Incorrect username or password"
     return render_template('login.html', message = message)
 
+@app.route('/register', methods=['GET','POST'] )
+def register():
+    message = ''
+    if request.method=='POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        check_query = "select username from users where username = %s"
+        user_exist = db.engine.execute(check_query,(username,)).fetchone()
+
+        if user_exist:
+            insert_query = "insert into users (username, password) values(%s,%s)"
+            db.engine.execute(insert_query,(username,password))
+
+            message = "Registration successful!"
+    
+    return render_template("register.html",message = message)
 
 if __name__ == '__main__':
     app.run(debug=True)
