@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+import requests
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root123@localhost/app'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -52,5 +53,34 @@ def register():
     
     return render_template("register.html",message = message)
 
+@app.route("/redirect", methods=['GET'])
+def redirect_view():
+    return render_template("redirect.html")
+
+@app.route("/open", methods=['GET'])
+def open():
+    target_url = request.args.get("url")
+    action = request.args.get("action","redirect")
+
+    # open redirection
+    if action=="redirect":
+        return redirect(target_url) #vulnerable code(open redirect)
+        # return redirect("https://mysite.com") secure code 
+    #ssrf
+    elif action=="fetch":
+        try:
+            response = request.get(target_url,TimeoutError=5)
+            if  response.status_code==200:
+                return f"Received 200 ok {target_url}"
+            else:
+                return f"Received {response.status_code} from {target_url}"
+        except requests.ConnectionError:
+            return f"Connection refused by {target_url}"
+        # except requests.ConnectTimeout:
+        #     return f"Connection time out for {target_url}"
+        except Exception as e:
+            return str(e)
+    return "Specific action and url parameters"
+    
 if __name__ == '__main__':
     app.run(debug=True)
